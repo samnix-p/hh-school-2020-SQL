@@ -43,15 +43,16 @@ SELECT
     max(all_app.app_cnt) AS max_app_cnt
 FROM (
     SELECT
+        e.employer_id,
         e.employer_name,
         v.position_name,
         count(a.vacancy_id) AS app_cnt
-    FROM application AS a
-    INNER JOIN vacancy AS v ON v.vacancy_id = a.vacancy_id
-    INNER JOIN employer AS e ON v.employer_id = e.employer_id
-    GROUP BY e.employer_name, v.position_name
+    FROM employer as e
+    INNER JOIN vacancy AS v ON v.employer_id = e.employer_id
+    LEFT JOIN application AS a ON a.vacancy_id = v.vacancy_id
+    GROUP BY e.employer_id, v.vacancy_id
 ) AS all_app
-GROUP BY all_app.employer_name
+GROUP BY all_app.employer_id, all_app.employer_name
 ORDER BY max_app_cnt DESC, all_app.employer_name
 LIMIT 5;
 
@@ -62,14 +63,15 @@ SELECT
     percentile_cont(0.5) WITHIN GROUP (ORDER BY all_vac.pos_cnt)
 FROM (
     SELECT
+        e.employer_id,
         e.employer_name,
         v.position_name,
         count(v.position_name) AS pos_cnt
     FROM vacancy AS v
     INNER JOIN employer AS e ON v.employer_id = e.employer_id
-    GROUP BY e.employer_name, v.position_name
+    GROUP BY e.employer_id, v.position_name
 ) AS all_vac
-GROUP BY all_vac.employer_name;
+GROUP BY all_vac.employer_id, all_vac.employer_name;
 
 -- task 7
 
