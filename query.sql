@@ -47,7 +47,7 @@ FROM (
         e.employer_name,
         v.position_name,
         count(a.vacancy_id) AS app_cnt
-    FROM employer as e
+    FROM employer AS e
     INNER JOIN vacancy AS v ON v.employer_id = e.employer_id
     LEFT JOIN application AS a ON a.vacancy_id = v.vacancy_id
     GROUP BY e.employer_id, v.vacancy_id
@@ -59,19 +59,14 @@ LIMIT 5;
 -- task 6
 
 SELECT
-    all_vac.employer_name,
     percentile_cont(0.5) WITHIN GROUP (ORDER BY all_vac.pos_cnt)
 FROM (
     SELECT
-        e.employer_id,
-        e.employer_name,
-        v.position_name,
-        count(v.position_name) AS pos_cnt
+        count(v.vacancy_id) AS pos_cnt
     FROM vacancy AS v
     INNER JOIN employer AS e ON v.employer_id = e.employer_id
-    GROUP BY e.employer_id, v.position_name
-) AS all_vac
-GROUP BY all_vac.employer_id, all_vac.employer_name;
+    GROUP BY e.employer_id
+) AS all_vac;
 
 -- task 7
 
@@ -88,5 +83,5 @@ FROM (
     INNER JOIN vacancy AS v ON v.vacancy_id = a.vacancy_id
     INNER JOIN employer AS e ON v.employer_id = e.employer_id
     GROUP BY e.area_id, v.vacancy_id
-) as all_first_apps
+) AS all_first_apps
 GROUP BY all_first_apps.area_id;
