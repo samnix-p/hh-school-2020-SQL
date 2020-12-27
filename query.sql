@@ -64,7 +64,7 @@ FROM (
     SELECT
         count(v.vacancy_id) AS pos_cnt
     FROM vacancy AS v
-    INNER JOIN employer AS e ON v.employer_id = e.employer_id
+    RIGHT JOIN employer AS e ON v.employer_id = e.employer_id
     GROUP BY e.employer_id
 ) AS all_vac;
 
